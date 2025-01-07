@@ -20,7 +20,15 @@ figma.ui.onmessage = async (pluginMessage) => {
 
     // Handle the `request-json` message
     if (pluginMessage.type === "request-json") {
-      const json = getObjectFromNode(exportType === "page" ? figma.currentPage : figma.root);
+      let json = {};
+      if (exportType === "page") {
+        // If export type is page, we export the project node and add the current page as the only child
+        json = getObjectFromNode(figma.root, true);
+        json.children = [getObjectFromNode(figma.currentPage)];
+      } else if (exportType === "project") {
+        // If export type is project, we export the project node and all of its children
+        json = getObjectFromNode(figma.root);
+      }
       const jsonString = JSON.stringify(json);
       figma.ui.postMessage({ type: "response-json", jsonString: jsonString || null });
     }

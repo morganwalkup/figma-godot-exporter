@@ -96,7 +96,7 @@ onmessage = async (event) => {
     if (event.data.pluginMessage.type === "response-json") {
         jsonResponse = event.data.pluginMessage.jsonString;
         if (!exportingZip) {
-            downloadFile(jsonResponse, "figma_export.godot.json", "application/json");
+            downloadFile(jsonResponse, "figma_layout.json", "application/json");
             jsonResponse = undefined;
         }
     }
@@ -130,7 +130,7 @@ onmessage = async (event) => {
         });
         zipObj["figma_download_fonts.bat"] = fflate.strToU8(fontsResponse);
         const zipped = fflate.zipSync(zipObj);
-        downloadFile(zipped, "figma_export.godot.zip", "application/zip");
+        downloadFile(zipped, "figma_godot_export.zip", "application/zip");
         jsonResponse = undefined;
         imagesResponse = undefined
         fontsResponse = undefined;
