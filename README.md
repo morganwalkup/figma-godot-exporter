@@ -1,5 +1,7 @@
 # Figma to Godot
 
+<img width="236" alt="image" src="https://github.com/user-attachments/assets/1673d8ea-8276-4203-b62b-4ad74b2ff683" />
+
 This plugin exports a Figma project (or page) as a collection of Godot-ready assets.
 
 These assets can be used alongside the [Godot Figma Importer](https://github.com/morganwalkup/godot-figma-importer) to create in-game UI.
