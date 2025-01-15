@@ -1,6 +1,6 @@
 # Figma to Godot
 
-<img width="236" alt="image" src="https://github.com/user-attachments/assets/1673d8ea-8276-4203-b62b-4ad74b2ff683" />
+<img width="232" alt="image" src="https://github.com/user-attachments/assets/d10d72c2-548a-4dc2-863d-aabdac7591d7" />
 
 This plugin exports a Figma project (or page) as a collection of Godot-ready assets.
 
