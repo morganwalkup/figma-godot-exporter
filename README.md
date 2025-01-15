@@ -2,7 +2,7 @@
 
 <img width="232" alt="image" src="https://github.com/user-attachments/assets/d10d72c2-548a-4dc2-863d-aabdac7591d7" />
 
-This plugin exports a Figma project (or page) as a collection of Godot-ready assets.
+This plugin exports a Figma project (or page, or frame) as a collection of Godot-ready assets.
 
 These assets can be used alongside the [Godot Figma Importer](https://github.com/morganwalkup/godot-figma-importer) to create in-game UI.
 
@@ -24,7 +24,7 @@ This plugin is designed to be as simple as possible. Zero dependencies, zero bui
 
 ## Using the plugin
 
-1. Choose an export type of "Current page" or "Entire project".
+1. Choose an export type of "Project", "Page", or "Frame". You must have a frame selected before opening the plugin to choose the "Frame" export type.
 1. Click one of the export buttons - "Export all as ZIP", "JSON only", "Images only", or "Fonts only".
 1. If you chose "Export all as ZIP", unzip the file and move the contents to your Godot project.
 1. To get font files, run the batch script. It will scan your local machine for any already-installed fonts. If that fails, it will download available fonts from Google Fonts. If *that* fails, you'll have to find your own way to provide Godot with the font files.
