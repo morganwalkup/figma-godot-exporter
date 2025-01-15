@@ -2,7 +2,15 @@
 figma.showUI(__html__);
 
 /** Global variables */
-let exportType = "page"; // "page" or "project"
+let exportType = "project"; // "project" | "page" | "frame"
+let exportNode = figma.root; // figma.root | figma.currentPage | some immediate child of figma.currentPage
+let selection = figma.currentPage.selection;
+
+/** Informs UI if user has selected a frame */
+figma.ui.postMessage({
+  type: "response-is-frame-selected",
+  isFrameSelected: selection.length > 0 && selection[0].type === "FRAME"
+});
 
 /**
  * Calls to `parent.postMessage` inside `ui.html` will trigger this callback.
@@ -16,18 +24,33 @@ figma.ui.onmessage = async (pluginMessage) => {
     // Handle the "export-type" message
     if (pluginMessage.type === "export-type") {
       exportType = pluginMessage.exportType;
+      if (exportType === "project") {
+        exportNode = figma.root;
+      } else if (exportType === "page") {
+        exportNode = figma.currentPage;
+      } else if (exportType === "frame") {
+        exportNode = selection[0];
+      }
     }
 
     // Handle the `request-json` message
     if (pluginMessage.type === "request-json") {
       let json = {};
-      if (exportType === "page") {
-        // If export type is page, we export the project node and add the current page as the only child
-        json = getObjectFromNode(figma.root, true);
-        json.children = [getObjectFromNode(figma.currentPage)];
-      } else if (exportType === "project") {
+      if (exportType === "project") {
         // If export type is project, we export the project node and all of its children
         json = getObjectFromNode(figma.root);
+        json.exportType = "PROJECT";
+      } else if (exportType === "page") {
+        // If export type is page, we export the project node and the current page as its only child
+        json = getObjectFromNode(figma.root, true);
+        json.children = [getObjectFromNode(figma.currentPage)];
+        json.exportType = "PAGE";
+      } else if (exportType === "frame") {
+        // If export type is frames, we export the project node, current page as only child, and the one selected frame as children
+        json = getObjectFromNode(figma.root, true);
+        json.children = [getObjectFromNode(figma.currentPage, true)];
+        json.children[0].children = [getObjectFromNode(selection[0])];
+        json.exportType = "FRAME";
       }
       const jsonString = JSON.stringify(json);
       figma.ui.postMessage({ type: "response-json", jsonString: jsonString || null });
@@ -101,8 +124,7 @@ async function getImages() {
   const imageHashes = new Set();
 
   // Find all nodes that contain image fills
-  const startingNode = exportType === "page" ? figma.currentPage : figma.root;
-  const nodes = startingNode.findAll(node => {
+  const nodes = exportNode.findAll(node => {
     if ('fills' in node) {
       return node.fills.some(fill => 
         fill.type === 'IMAGE' && 
@@ -173,7 +195,7 @@ const getFontList = async () => {
   };
 
   await figma.loadAllPagesAsync();
-  traverse(exportType === "page" ? figma.currentPage : figma.root);
+  traverse(exportNode);
   return Array.from(fonts);
 };
 

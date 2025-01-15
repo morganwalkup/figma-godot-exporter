@@ -1,11 +1,20 @@
 <script src="https://unpkg.com/fflate"></script>
 <h3>Figma to Godot</h3>
 <p>Exports data and assets to a Godot-ready format.</p>
+<label for="radio-container">Export type:</label>
 <div id="radio-container">
-    <input type="radio" id="export-page" name="export-type" checked>
-    <label for="export-page">Export current page</label>
-    <input type="radio" id="export-project" name="export-type">
-    <label for="export-project">Export entire project</label>
+    <label for="export-project" title="Export the entire project.">
+        <input type="radio" id="export-project" name="export-type" checked>
+        Project
+    </label>
+    <label for="export-page" title="Export only the current page.">
+        <input type="radio" id="export-page" name="export-type">
+        Page
+    </label>
+    <label for="export-frame" title="Exports only the current frame (if a frame is selected).">
+        <input type="radio" id="export-frame" name="export-type">
+        Frame
+    </label>
 </div>
 <div id="button-container">
     <button type="button" id="export-zip" title="Exports layout json, images, and fonts as a single zip file.">Export all as ZIP</button>
@@ -26,7 +35,7 @@ p {
     font-size: 0.8rem;
     font-weight: 400;
     margin: 0 0 0.25rem 0;
-    margin-bottom: 3.1rem;
+    margin-bottom: 0.75rem;
     padding: 0 0.05rem;
 }
 label {
@@ -34,20 +43,46 @@ label {
     font-size: 0.8rem;
     font-weight: 400;
 }
-input[type="radio"] {
-    margin: 0;
-    margin-top: 0.15rem;
+label[for="radio-container"] {
+    font-weight: 600;
 }
 #radio-container {
-    margin-bottom: 0.5rem;
+    margin-top: 0.2rem;
+    margin-bottom: 0.75rem;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.3rem;
 }
-#radio-container > label:first-of-type {
-    margin-right: 0.8rem;
+#radio-container > label {
+    margin: 0;
+    border: 1px solid #808080;
+    border-radius: 1rem;
+    padding: 0.2rem 0.6rem 0.35rem 0.5rem;
+    flex-grow: 1;
+    &:hover {
+        border: 1px solid #383838;
+    }
+    &:has(input[type="radio"]:checked) {
+        border: 1px solid #3273f6;
+        background: #3273f6;
+        color: #FFF;
+    }
+    &:hover:has(input[type="radio"]:checked) {
+        border: 1px solid #205cd4;
+        background: #205cd4;
+    }
+    &:has(input[type="radio"]:disabled) {
+        border: 1px solid #d3d3d3;
+        background: transparent;
+        color: #d3d3d3;
+    }
+}
+#radio-container > label > input[type="radio"] {
+    margin: 0;
+    margin-top: -0.15rem;
+    vertical-align: middle;
 }
 button {
     background: #313131;
@@ -92,6 +127,14 @@ const downloadFile = (content, filename, type) => {
 }
 
 onmessage = async (event) => {
+    // Handle response-is-frame-selected message
+    if (event.data.pluginMessage.type === "response-is-frame-selected") {
+        const isFrameSelected = event.data.pluginMessage.isFrameSelected;
+        if (!isFrameSelected) {
+            document.getElementById("export-frame").disabled = true;
+        }
+    }
+
     // Handle response-json message
     if (event.data.pluginMessage.type === "response-json") {
         jsonResponse = event.data.pluginMessage.jsonString;
