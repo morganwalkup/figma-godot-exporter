@@ -180,12 +180,16 @@ onmessage = async (event) => {
     }
 }
 
+document.getElementById("export-project").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "export-type", exportType: "project" } }, "*");
+};
+
 document.getElementById("export-page").onclick = () => {
     parent.postMessage({ pluginMessage: { type: "export-type", exportType: "page" } }, "*");
 };
 
-document.getElementById("export-project").onclick = () => {
-    parent.postMessage({ pluginMessage: { type: "export-type", exportType: "project" } }, "*");
+document.getElementById("export-frame").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "export-type", exportType: "frame" } }, "*");
 };
 
 document.getElementById("export-zip").onclick = () => {
